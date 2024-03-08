@@ -13,8 +13,6 @@ export const options = {
 
 export default function () {
   const domain = `localhost:8000`;
-  let startTime = 0;
-  let endTime = 0;
 
   const sid = makeConnection(domain);
 
@@ -23,10 +21,22 @@ export default function () {
   let response = ws.connect(url, {}, function (socket) {
     socket.on("open", function open() {
       console.log("connected");
-      const uid = "ASDJASDk";
-      socket.send("initConnection", uid);
+
+      // do not change any of these
+      // protocols lol
+      socket.send("2probe");
+      socket.send("5");
+      socket.send("3");
+
+      // send to event ping
+      const payload = `42["ping"]`;
+      socket.send(payload);
     });
 
+    // "message" is keyword constant
+    socket.on("message", function pong(msg) {
+      console.log(msg);
+    });
     socket.on("debugMsg", function incoming(msg) {
       console.log(msg);
     });
